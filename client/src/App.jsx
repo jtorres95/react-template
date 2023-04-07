@@ -1,15 +1,18 @@
 import "./App.css";
 import axios from "axios";
 import { useState } from "react";
+import RenderUsers from "./components/RenderUsers";
+import RenderQuestions from "./components/RenderQuestions";
 
 function App() {
-  const [data, setData] = useState("{}");
+  const [data, setData] = useState('');
   const urlWithProxy = "/api/v1";
 
-  function getDataFromServer() {
+  function getDataFromServer(proxyUrl, pathToRoute, renderFunction) {
+    const route = proxyUrl + pathToRoute;
     axios
-      .get(urlWithProxy)
-      .then((res) => setData(res.data))
+      .get(route)
+      .then((res) => setData(renderFunction(res.data)))
       .catch((err) => {
         console.error(err);
       });
@@ -17,9 +20,11 @@ function App() {
 
   return (
     <div className="App">
-      <button onClick={getDataFromServer}>Access server using proxy</button>
-      <p>data : {data.message}</p>
+      {getDataFromServer(urlWithProxy, "/questions", RenderQuestions)}
+      <h1>Questions</h1>
+      <div>{data}</div>
     </div>
+    
   );
 }
 
